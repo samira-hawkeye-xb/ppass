@@ -5,146 +5,416 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ppass - 跨网络文件管理</title>
   <style>
+    :root {
+      --primary: #007AFF;
+      --primary-light: #E8F4FF;
+      --bg: #F5F7FA;
+      --card-bg: #FFFFFF;
+      --text: #1A1A1A;
+      --text-secondary: #666666;
+      --border: #E5E5E5;
+      --success: #34C759;
+      --warning: #FF9500;
+      --danger: #FF3B30;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f5f5;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      line-height: 1.5;
     }
-    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-    h1 { text-align: center; color: #333; margin-bottom: 20px; }
-    .card {
-      background: white;
-      border-radius: 12px;
+    
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
       padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .btn {
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .logo {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    
+    /* Mode Selection */
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .mode-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px;
+      background: var(--primary-light);
+      border: 2px solid transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .mode-btn:hover {
+      border-color: var(--primary);
+    }
+    
+    .mode-btn .icon {
+      font-size: 32px;
+    }
+    
+    .mode-btn .label {
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .mode-btn .desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    
+    /* Status */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .status.online { background: #E8F8F0; color: #1D7A44; }
+    .status.offline { background: #FFF0F0; color: #C73E3A; }
+    .status.connecting { background: #FFF8E6; color: #996600; }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    
+    /* Device Info */
+    .device-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: var(--primary-light);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .device-id {
+      font-family: monospace;
+      font-size: 13px;
+      color: var(--primary);
+      background: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    
+    /* QR Code */
+    .qr-section {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .qr-section h3 {
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    #qrcode {
       display: inline-block;
-      padding: 12px 24px;
-      background: #007AFF;
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+    }
+    
+    /* Device List */
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .device-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .device-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg);
+      border-radius: 8px;
+    }
+    
+    .device-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    
+    .device-status.offline {
+      background: var(--danger);
+    }
+    
+    /* File List */
+    .file-list {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .file-item:last-child {
+      border-bottom: none;
+    }
+    
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .file-icon {
+      font-size: 20px;
+    }
+    
+    .file-name {
+      font-size: 14px;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      background: var(--primary);
       color: white;
       border: none;
       border-radius: 8px;
+      font-size: 14px;
       cursor: pointer;
-      font-size: 16px;
-      margin: 5px;
+      transition: opacity 0.2s;
     }
-    .btn:hover { background: #0056b3; }
-    .btn-secondary { background: #34C759; }
-    .btn-secondary:hover { background: #248a3d; }
-    .status { padding: 10px; border-radius: 8px; margin: 10px 0; }
-    .status.online { background: #d4edda; color: #155724; }
-    .status.offline { background: #f8d7da; color: #721c24; }
-    .status.connecting { background: #fff3cd; color: #856404; }
-    #peerId { font-family: monospace; font-size: 14px; background: #f0f0f0; padding: 8px; border-radius: 4px; }
-    #qrcode { display: flex; justify-content: center; margin: 20px 0; }
-    #devices { list-style: none; }
-    #devices li {
-      padding: 12px;
-      border: 1px solid #eee;
-      margin: 8px 0;
+    
+    .btn:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-secondary {
+      background: var(--success);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    /* Input */
+    .input-group {
+      display: flex;
+      gap: 8px;
+    }
+    
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 14px;
     }
-    #devices li:hover { background: #f8f8f8; }
-    .tab { display: flex; border-bottom: 1px solid #eee; margin-bottom: 20px; }
-    .tab-item {
-      padding: 12px 24px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
+    
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
     }
-    .tab-item.active { border-bottom-color: #007AFF; color: #007AFF; }
-    .hidden { display: none; }
-    .file-list { list-style: none; }
-    .file-item {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
+    
+    /* Empty */
+    .empty-tip {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
     }
-    .file-icon { margin-right: 8px; }
+    
+    /* Hidden */
+    .hidden {
+      display: none !important;
+    }
+    
+    /* Log */
     .log {
-      background: #1e1e1e;
-      color: #0f0;
-      padding: 15px;
+      background: #1E1E1E;
+      color: #00FF00;
+      padding: 12px;
       border-radius: 8px;
       font-family: monospace;
-      font-size: 12px;
-      max-height: 200px;
+      font-size: 11px;
+      max-height: 150px;
       overflow-y: auto;
     }
+    
+    /* Folder Selected */
+    .folder-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--success);
+      color: white;
+      border-radius: 20px;
+      font-size: 13px;
+    }
   </style>
-  <script type="module" crossorigin src="./assets/index-DFYmBz7z.js"></script>
+  <script type="module" crossorigin src="./assets/index-B_UjANnz.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>🖥️ ppass - 跨网络文件管理</h1>
+  <div class="app">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">☁️ ppass</div>
+      <div class="tagline">把闲置电脑变成私有云</div>
+    </div>
     
-    <!-- 设备模式选择 -->
+    <!-- Mode Selection -->
     <div class="card" id="modeCard">
-      <h2>选择模式</h2>
-      <p style="color: #666; margin: 10px 0;">选择一个角色开始：</p>
-      <button class="btn" onclick="startAsHost()">📁 作为存储端（等待连接）</button>
-      <button class="btn btn-secondary" onclick="startAsClient()">📱 作为访问端（连接设备）</button>
+      <div class="mode-grid">
+        <button class="mode-btn" onclick="startAsHost()">
+          <span class="icon">🖥️</span>
+          <span class="label">存储端</span>
+          <span class="desc">共享文件给他人</span>
+        </button>
+        <button class="mode-btn" onclick="startAsClient()">
+          <span class="icon">📱</span>
+          <span class="label">访问端</span>
+          <span class="desc">访问远程文件</span>
+        </button>
+      </div>
     </div>
-
-    <!-- 存储端界面 -->
+    
+    <!-- Host Panel -->
     <div class="card hidden" id="hostPanel">
-      <h2>📁 存储端</h2>
-      <div class="status offline" id="hostStatus">初始化中...</div>
-      
-      <div id="hostSetup">
-        <p>1. 选择要共享的文件夹：</p>
-        <button class="btn" onclick="selectFolder()">📂 选择文件夹</button>
-        <p id="selectedFolder" style="margin: 10px 0; color: #666;"></p>
-        
-        <p>2. 分享给其他设备：</p>
-        <div id="qrcode"></div>
-        <p>Peer ID: <span id="peerId">-</span></p>
+      <div class="status offline" id="hostStatus">
+        <span class="status-dot"></span>
+        <span>初始化中...</span>
       </div>
       
-      <div id="hostConnected" class="hidden">
-        <p>✅ 已连接设备：</p>
-        <ul id="connectedDevices"></ul>
+      <div class="device-info">
+        <span>我的设备ID:</span>
+        <span class="device-id" id="peerId">-</span>
+      </div>
+      
+      <!-- QR Code -->
+      <div class="qr-section" id="qrSection">
+        <h3>📱 扫码访问我的文件</h3>
+        <div id="qrcode"></div>
+      </div>
+      
+      <!-- Folder -->
+      <div style="margin-top: 16px;">
+        <button class="btn btn-secondary" onclick="selectFolder()">📂 选择共享文件夹</button>
+        <span id="selectedFolder"></span>
+      </div>
+      
+      <!-- Connected Devices -->
+      <div style="margin-top: 20px;">
+        <div class="section-title">
+          <span>已连接设备 (<span id="deviceCount">0</span>)</span>
+          <button class="btn btn-sm btn-outline" onclick="refreshFiles()">🔄 刷新</button>
+        </div>
+        <div class="device-list" id="deviceList">
+          <div class="empty-tip">等待设备连接...</div>
+        </div>
       </div>
     </div>
-
-    <!-- 访问端界面 -->
+    
+    <!-- Client Panel -->
     <div class="card hidden" id="clientPanel">
-      <h2>📱 访问端</h2>
-      <div class="status offline" id="clientStatus">初始化中...</div>
+      <div class="status offline" id="clientStatus">
+        <span class="status-dot"></span>
+        <span>初始化中...</span>
+      </div>
       
+      <!-- Connection -->
       <div id="clientSetup">
-        <p>输入对方 Peer ID 或扫码连接：</p>
-        <input type="text" id="remotePeerId" placeholder="输入 Peer ID" style="padding: 8px; width: 200px; margin: 10px 0;">
-        <button class="btn" onclick="connectToPeer()">🔗 连接</button>
+        <div class="input-group">
+          <input type="text" id="remotePeerId" placeholder="输入设备ID">
+          <button class="btn" onclick="connectToPeer()">连接</button>
+        </div>
       </div>
       
       <div id="clientConnected" class="hidden">
-        <p>✅ 已连接到: <span id="connectedHost"></span></p>
-        <button class="btn" onclick="browseRemoteFiles()">📂 浏览文件</button>
+        <div class="status online" id="connectionStatus">
+          <span class="status-dot"></span>
+          <span>已连接</span>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn btn-secondary" onclick="refreshFiles()">🔄 刷新文件</button>
+        </div>
       </div>
     </div>
-
-    <!-- 文件浏览 -->
+    
+    <!-- File Browser -->
     <div class="card hidden" id="fileBrowser">
-      <div class="tab">
-        <div class="tab-item active">📁 文件列表</div>
+      <div class="section-title">
+        <span>📁 文件列表</span>
       </div>
-      <ul class="file-list" id="fileList"></ul>
+      <div class="file-list" id="fileList"></div>
     </div>
-
-    <!-- 日志 -->
+    
+    <!-- Log -->
     <div class="card">
-      <h3>📋 日志</h3>
+      <div class="section-title">📋 日志</div>
       <div class="log" id="log"></div>
     </div>
   </div>
-
+  
 </body>
 </html>

@@ -261,6 +261,30 @@
       margin-bottom: 4px;
     }
     
+    .file-actions {
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    
+    .file-card:hover .file-actions {
+      opacity: 1;
+    }
+    
+    .btn-action {
+      background: var(--bg-hover);
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .btn-action:hover {
+      background: var(--accent);
+    }
+    
     .file-meta {
       font-size: 11px;
       color: var(--text-tertiary);
@@ -507,7 +531,7 @@
       }
     }
   </style>
-  <script type="module" crossorigin src="./assets/index-DQUPIrVA.js"></script>
+  <script type="module" crossorigin src="./assets/index-CxoY7SKr.js"></script>
 </head>
 <body>
   <!-- Mode Selection -->
@@ -570,6 +594,7 @@
           <span class="breadcrumb-item active">全部文件</span>
         </div>
         <div class="header-actions">
+          <button class="btn btn-ghost" onclick="createFolder()">📁 新建文件夹</button>
           <button class="btn btn-ghost" onclick="refreshFiles()">🔄</button>
           <button class="btn btn-primary" onclick="selectFolder()" id="selectFolderBtn">
             📂 选择文件夹
@@ -585,8 +610,9 @@
             <div class="connection-status">
               <span class="status-dot" id="statusDot"></span>
               <span id="statusText">在线</span>
+              <span style="margin-left: 8px; color: var(--text-secondary); font-size: 12px;" id="deviceName">我的设备</span>
             </div>
-            <span style="color: var(--text-secondary); font-size: 12px;">存储端</span>
+            <button class="btn-ghost btn-sm" onclick="setDeviceName()">✏️ 重命名</button>
           </div>
           
           <div class="device-id-box">

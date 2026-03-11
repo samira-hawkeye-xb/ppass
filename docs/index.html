@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ppass</title>
-  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
   <style>
     :root {
       --bg: #0f0f0f;
@@ -14,7 +13,6 @@
       --text: #fff;
       --text2: #888;
       --accent: #4f46e5;
-      --accent-hover: #6366f1;
       --success: #22c55e;
       --danger: #ef4444;
       --radius: 8px;
@@ -241,7 +239,7 @@
     
     #app.hidden { display: none !important; }
   </style>
-  <script type="module" crossorigin src="./assets/index-rrgZoDXJ.js"></script>
+  <script type="module" crossorigin src="./assets/index-oXXaFug8.js"></script>
 </head>
 <body>
   <!-- Mode Select -->
@@ -250,12 +248,12 @@
     <div class="tagline">Private cloud file system</div>
     <div class="mode-cards">
       <div class="mode-card" onclick="startHost()">
-        <div class="mode-icon"><i class="ph ph-hard-drives"></i></div>
+        <div class="mode-icon"></div>
         <div class="mode-title">Storage</div>
         <div class="mode-desc">Share local files</div>
       </div>
       <div class="mode-card" onclick="startClient()">
-        <div class="mode-icon"><i class="ph ph-device-mobile"></i></div>
+        <div class="mode-icon"></div>
         <div class="mode-title">Access</div>
         <div class="mode-desc">Access remote files</div>
       </div>
@@ -271,11 +269,11 @@
       <div class="nav-section">
         <div class="nav-title">FILES</div>
         <div class="nav-item active">
-          <i class="ph ph-folder"></i>
+          
           <span>All Files</span>
         </div>
         <div class="nav-item">
-          <i class="ph ph-clock"></i>
+          
           <span>Recent</span>
         </div>
       </div>
@@ -283,7 +281,7 @@
       <div class="nav-section">
         <div class="nav-title">STORAGE</div>
         <div class="nav-item">
-          <i class="ph ph-hard-drive"></i>
+          
           <span>Local</span>
         </div>
       </div>
@@ -294,9 +292,9 @@
       <div class="header">
         <div class="header-title">All Files</div>
         <div style="display: flex; gap: 8px;">
-          <button class="btn btn-ghost btn-sm" onclick="refreshFiles()"><i class="ph ph-arrow-clockwise"></i></button>
-          <button class="btn btn-ghost btn-sm" onclick="reconnect()"><i class="ph ph-arrow-counter-clockwise"></i></button>
-          <button class="btn btn-ghost btn-sm" onclick="clearAll()"><i class="ph ph-trash"></i></button>
+          <button class="btn btn-ghost btn-sm" onclick="refreshFiles()"></button>
+          <button class="btn btn-ghost btn-sm" onclick="reconnect()"></button>
+          <button class="btn btn-ghost btn-sm" onclick="clearAll()"></button>
         </div>
       </div>
       
@@ -304,15 +302,15 @@
         <!-- Host Panel -->
         <div class="panel" id="hostPanel">
           <div class="panel-title">
-            <span><i class="ph ph-wifi-high"></i> My Device</span>
+            <span> My Device</span>
             <span class="btn btn-ghost btn-sm" onclick="selectFolder()">
-              <i class="ph ph-folder-open"></i> Select Folder
+               Select Folder
             </span>
           </div>
           <div class="device-id-box">
             <span style="color: var(--text2); font-size: 12px;">ID:</span>
             <span class="device-id" id="deviceId">-</span>
-            <button class="btn btn-ghost btn-sm" onclick="copyId()"><i class="ph ph-copy"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="copyId()"></button>
           </div>
           <div class="panel-title">Connections (<span id="deviceCount">0</span>)</div>
           <div class="device-list" id="deviceList">
@@ -323,7 +321,7 @@
         <!-- Client Panel -->
         <div class="panel" id="clientPanel" style="display: none;">
           <div class="panel-title">
-            <span><i class="ph ph-link"></i> Connect</span>
+            <span> Connect</span>
           </div>
           <div style="display: flex; gap: 8px;">
             <input type="text" id="remoteInput" placeholder="Enter device ID" style="flex: 1;">

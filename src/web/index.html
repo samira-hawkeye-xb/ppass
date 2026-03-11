@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ppass - 跨网络文件管理</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { text-align: center; color: #333; margin-bottom: 20px; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 5px;
+    }
+    .btn:hover { background: #0056b3; }
+    .btn-secondary { background: #34C759; }
+    .btn-secondary:hover { background: #248a3d; }
+    .status { padding: 10px; border-radius: 8px; margin: 10px 0; }
+    .status.online { background: #d4edda; color: #155724; }
+    .status.offline { background: #f8d7da; color: #721c24; }
+    .status.connecting { background: #fff3cd; color: #856404; }
+    #peerId { font-family: monospace; font-size: 14px; background: #f0f0f0; padding: 8px; border-radius: 4px; }
+    #qrcode { display: flex; justify-content: center; margin: 20px 0; }
+    #devices { list-style: none; }
+    #devices li {
+      padding: 12px;
+      border: 1px solid #eee;
+      margin: 8px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #devices li:hover { background: #f8f8f8; }
+    .tab { display: flex; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+    .tab-item {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-item.active { border-bottom-color: #007AFF; color: #007AFF; }
+    .hidden { display: none; }
+    .file-list { list-style: none; }
+    .file-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+    .file-icon { margin-right: 8px; }
+    .log {
+      background: #1e1e1e;
+      color: #0f0;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🖥️ ppass - 跨网络文件管理</h1>
+    
+    <!-- 设备模式选择 -->
+    <div class="card" id="modeCard">
+      <h2>选择模式</h2>
+      <p style="color: #666; margin: 10px 0;">选择一个角色开始：</p>
+      <button class="btn" onclick="startAsHost()">📁 作为存储端（等待连接）</button>
+      <button class="btn btn-secondary" onclick="startAsClient()">📱 作为访问端（连接设备）</button>
+    </div>
+
+    <!-- 存储端界面 -->
+    <div class="card hidden" id="hostPanel">
+      <h2>📁 存储端</h2>
+      <div class="status offline" id="hostStatus">初始化中...</div>
+      
+      <div id="hostSetup">
+        <p>1. 选择要共享的文件夹：</p>
+        <button class="btn" onclick="selectFolder()">📂 选择文件夹</button>
+        <p id="selectedFolder" style="margin: 10px 0; color: #666;"></p>
+        
+        <p>2. 分享给其他设备：</p>
+        <div id="qrcode"></div>
+        <p>Peer ID: <span id="peerId">-</span></p>
+      </div>
+      
+      <div id="hostConnected" class="hidden">
+        <p>✅ 已连接设备：</p>
+        <ul id="connectedDevices"></ul>
+      </div>
+    </div>
+
+    <!-- 访问端界面 -->
+    <div class="card hidden" id="clientPanel">
+      <h2>📱 访问端</h2>
+      <div class="status offline" id="clientStatus">初始化中...</div>
+      
+      <div id="clientSetup">
+        <p>输入对方 Peer ID 或扫码连接：</p>
+        <input type="text" id="remotePeerId" placeholder="输入 Peer ID" style="padding: 8px; width: 200px; margin: 10px 0;">
+        <button class="btn" onclick="connectToPeer()">🔗 连接</button>
+      </div>
+      
+      <div id="clientConnected" class="hidden">
+        <p>✅ 已连接到: <span id="connectedHost"></span></p>
+        <button class="btn" onclick="browseRemoteFiles()">📂 浏览文件</button>
+      </div>
+    </div>
+
+    <!-- 文件浏览 -->
+    <div class="card hidden" id="fileBrowser">
+      <div class="tab">
+        <div class="tab-item active">📁 文件列表</div>
+      </div>
+      <ul class="file-list" id="fileList"></ul>
+    </div>
+
+    <!-- 日志 -->
+    <div class="card">
+      <h3>📋 日志</h3>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>

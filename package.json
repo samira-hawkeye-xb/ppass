@@ -1,0 +1,26 @@
+{
+  "name": "ppass",
+  "version": "1.0.0",
+  "description": "跨网络P2P文件管理系统 - 把闲置电脑变成私有云",
+  "private": true,
+  "workspaces": [
+    "src/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev:web & npm run dev:signaling",
+    "dev:web": "cd src/web && npm run dev",
+    "dev:signaling": "cd src/signaling && npm run dev",
+    "build": "npm run build:web && npm run build:signaling",
+    "build:web": "cd src/web && npm run build",
+    "build:signaling": "cd src/signaling && npm run build"
+  },
+  "keywords": [
+    "p2p",
+    "file-sharing",
+    "webRTC",
+    "私有云",
+    "nas"
+  ],
+  "author": "Samira",
+  "license": "MIT"
+}
